@@ -41,10 +41,11 @@ make clean
 Upload the project
 ------------------
 
-Uploading the project can be done with the command:
+Uploading the project can be done with the command (for unknown reason, my user does not have sufficient rights, so I use sudo here):
 ```
-make do_upload
+sudo make do_upload
 ```
+It happens that the board do not repond. If it's the case, you can retry when pressing the *user_sw* button.
 
 Serial Monitor
 --------------

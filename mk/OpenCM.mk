@@ -197,7 +197,7 @@ override TARGET_HEX = $(OBJDIR)/$(TARGET).bin
 ifndef AVRDUDE
     AVRDUDE := $(shell which robotis-loader 2>/dev/null)
     ifndef AVRDUDE
-        AVRDUDE = $(ARDMK_DIR)/bin/robotis-loader
+        AVRDUDE = $(AVR_TOOLS_DIR)/robotis-loader
     endif
 endif
 
