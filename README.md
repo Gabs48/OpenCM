@@ -49,7 +49,10 @@ make do_upload
 Serial Monitor
 --------------
 
-TODO: investigate that!
+You can open the serial monitor via the make tool with:
+```
+make monitor
+```
 
 
 Other
