@@ -3,8 +3,8 @@ OPENCM
 
 Makefile and tools to compile, upload and monitor a C project on a ROBOTIS OpenCM board.
 It consists in a refactor of the following projects:
- - [Arduino-make https://github.com/sudar/Arduino-Makefile]
- - The Robotis OpenCM projects ([compiled version http://support.robotis.com/en/software/robotis_opencm/robotis_opencm.html], [source version (not maintained) https://github.com/robotis-pandora/ROBOTIS-OpenCM]
+ - [Arduino-make](https://github.com/sudar/Arduino-Makefile)
+ - The Robotis OpenCM projects ([compiled version](http://support.robotis.com/en/software/robotis_opencm/robotis_opencm.html), [source version (not maintained)](https://github.com/robotis-pandora/ROBOTIS-OpenCM)]
 
 The repository contains the following folders:
   
