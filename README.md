@@ -58,8 +58,8 @@ make monitor
 Other
 -----
 
-Problem? Just add an issue on this github repository
-Using to QTcreator? Have a look here https://github.com/cleitonsouza01/qt-creator-arduino
+- Problem? Just add an issue on this github repository
+- Using to QTcreator? Have a look here https://github.com/cleitonsouza01/qt-creator-arduino
 
  
 
