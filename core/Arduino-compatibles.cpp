@@ -206,6 +206,15 @@ void strreverse(char* begin, char* end) {
   while(end>begin)
     aux=*end, *end--=*begin, *begin++=aux;
 }
+
+
+/*
+*  Gabriel Urbain: new versions of ARM compiler include these methods already
+*/
+
+#if GCC_VERSION < 40500
+
+
 void itoa(int value, char* str, int base) {
   static char num[] = "0123456789abcdefghijklmnopqrstuvwxyz";
   char* wstr=str;
@@ -236,5 +245,4 @@ void itoa(int value, char* str, int base) {
 }
 
 
-
-
+#endif

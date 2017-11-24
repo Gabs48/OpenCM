@@ -403,11 +403,25 @@ uint8 waitForButtonPress(uint32 timeout_millis=0);
  */
 
 void shiftOut(uint8 dataPin, uint8 clockPin, uint8 bitOrder, uint8 value);
+
+
+
+/*
+*  Gabriel Urbain: new versions of ARM compiler include these methods already
+*/
+
+#define GCC_VERSION (__GNUC__ * 10000 \
+                     + __GNUC_MINOR__ * 100 \
+                     + __GNUC_PATCHLEVEL__)
+
+#if GCC_VERSION < 40500
 /*
  * Convert integer value to sting value
  * atoi() is included compiler's libraries but itoa() is not included
  * itoa() added in Arduino-compatibles temporarily.
  * */
 void itoa(int value, char* str, int base);
+
+#endif
 
 #endif /* ARDUINO_COMPATIBLES_H_ */
