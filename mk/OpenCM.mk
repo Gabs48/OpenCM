@@ -27,10 +27,12 @@ ifndef ARDMK_DIR
     ARDMK_DIR := $(realpath $(dir $(realpath $(lastword $(MAKEFILE_LIST)))))
 endif
 
+
+ARDUINO_DIR = $(OPENCMIDE_DIR)
+
 # include Common.mk now we know where it is
 include $(ARDMK_DIR)/Common.mk
 
-ARDUINO_DIR = $(OPENCMIDE_DIR)
 
 ifndef ARDMK_VENDOR
     ARDMK_VENDOR         = robotis
