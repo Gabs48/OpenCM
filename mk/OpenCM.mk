@@ -216,7 +216,7 @@ override AVRDUDE_UPLOAD_HEX = $(TARGET_HEX)
 
 ### Gabriel Urbain: Hardcoded path for ARM NONE EABI binaries
 
-AVR_TOOLS_PATH = /usr/bin
+#AVR_TOOLS_PATH = /usr/bin
 
 
 ########################################################################
