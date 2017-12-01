@@ -2,7 +2,7 @@
 
 # This script sends a program on a robotis board (OpenCM9.04 or CM900)
 # using the robotis bootloader (used in OpenCM IDE)
-# 
+#
 # Usage:
 # python robotis-loader.py <serial port> <binary>
 #
@@ -11,7 +11,10 @@
 #
 # https://github.com/Gregwar/robotis-loader
 
-import serial, sys, os, time
+import serial
+import sys
+import os
+import time
 
 print('~~ Robotis loader ~~')
 print('')
@@ -19,76 +22,124 @@ print('')
 # Reading command line
 if len(sys.argv) != 3:
     exit('! Usage: robotis-loader.py <serial-port> <binary>')
+
 pgm, port, binary = sys.argv
 
 # Helper to prints a progress bar
+
+
 def progressBar(percent, precision=65):
-    threshold=precision*percent/100.0
+    threshold = precision * percent / 100.0
     sys.stdout.write('[ ')
     for x in xrange(0, precision):
-        if x < threshold: sys.stdout.write('#')
-        else: sys.stdout.write(' ')
+        if x < threshold:
+            sys.stdout.write('#')
+        else:
+            sys.stdout.write(' ')
+
     sys.stdout.write(' ] ')
     sys.stdout.flush()
 
 # Opening the firmware file
-try:
-    stat = os.stat(binary)
-    size = stat.st_size
-    firmware = file(binary, 'rb')
-    print('* Opening %s, size=%d' % (binary, size))
-except:
-    exit('! Unable to open file %s' % binary)
+
+
+def try_opening_firmware_file():
+    try:
+        stat = os.stat(binary)
+        size = stat.st_size
+        firmware = file(binary, 'rb')
+        print('* Opening %s, size=%d' % (binary, size))
+        return firmware, size
+    except:
+        exit('! Unable to open file %s' % binary)
 
 # Opening serial port
-try:
+
+
+def try_opening_serial_port():
+    try:
+        return serial.Serial(port, baudrate=115200)
+    except:
+        exit('! Unable to open serial port %s' % port)
+
+
+def reset_board(s):
+    print('* Resetting the board')
+    s.setRTS(True)
+    s.setDTR(False)
+    time.sleep(0.1)
+    s.setRTS(False)
+    s.write('CM9X')
+    s.close()
+    time.sleep(1.0)
+
+
+def connect(s):
+    print('* Connecting...')
     s = serial.Serial(port, baudrate=115200)
-except:
-    exit('! Unable to open serial port %s' % port)
+    return s
 
-print('* Resetting the board')
-s.setRTS(True)
-s.setDTR(False)
-time.sleep(0.1)
-s.setRTS(False)
-s.write('CM9X')
-s.close()
-time.sleep(1.0);
 
-print('* Connecting...')
-s = serial.Serial(port, baudrate=115200)
-s.write('AT&LD')
-print('* Download signal transmitted, waiting...')
+def send_download_signal(s):
+    s.write('AT&LD')
+    print('* Download signal transmitted, waiting...')
 
-# Entering bootloader sequence
-while True:
-    line = s.readline().strip()
-    if line.endswith('Ready..'):
-        print('* Board ready, sending data')
-        cs = 0
-        pos = 0
-        while True:
-            c = firmware.read(2048)
-            if len(c):
-                pos += len(c)
-                sys.stdout.write("\r")
-                progressBar(100*float(pos)/float(size))
-                s.write(c)
-                for k in range(0,len(c)):
-                    cs = (cs+ord(c[k]))%256
-            else:
-                break
-        print('')
-        s.setDTR(True)
-        print('* Checksum: %d' % (cs))
-        s.write(chr(cs))
-        print('* Firmware was sent')
-    else:
-        if line == 'Success..':
-            print('* Success, running the code')
+
+def send_firmware(s, firmware, size):
+    # Entering bootloader sequence
+    while True:
+        line = s.readline().strip()
+
+        if line.endswith('Ready..'):
+            print('* Board ready, sending data')
+            cs = 0
+            pos = 0
+            while True:
+                c = firmware.read(2048)
+                if len(c):
+                    pos += len(c)
+                    sys.stdout.write("\r")
+                    progressBar(100 * float(pos) / float(size))
+                    s.write(c)
+                    for k in range(0, len(c)):
+                        cs = (cs + ord(c[k])) % 256
+                else:
+                    break
             print('')
-            s.write('AT&RST')
-            s.close()
-            exit()
+            s.setDTR(True)
+            print('* Checksum: %d' % (cs))
+            s.write(chr(cs))
+            print('* Firmware was sent')
         else:
-            print('Board -> '+line)
+            if line == 'Success..':
+                print('* Success, running the code')
+                s.write('AT&RST')
+                print('* Wrote AT&RST')
+                s.close()
+                print('* serial closed')
+                print('')
+                break
+            else:
+                print('Board -> ' + line)
+
+
+def upload_firmware():
+    firmware, size = try_opening_firmware_file()
+    s = try_opening_serial_port()
+    reset_board(s)
+    s = connect(s)
+    send_download_signal(s)
+
+    try:
+        send_firmware(s, firmware, size)
+        return True
+    except serial.SerialException as se:
+        print('---SerialException thrown: "{}"---\n---retrying...---'.format(se))
+        return False
+
+successful_upload = False
+while not successful_upload:
+    successful_upload = upload_firmware()
+    time.sleep(1.0);
+
+exit()
